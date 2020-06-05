@@ -9,14 +9,24 @@
 import * as THREE from 'three'
 import dat from 'dat.gui'
 export default {
-  data: () => ({
-    controls: {
-      scene: null,
-      camera: null,
-      renderer: null,
-      rotationSpeed: 0.02
+  // data: () => ({
+  //   controls: {
+  //     scene: null,
+  //     camera: null,
+  //     renderer: null,
+  //     rotationSpeed: 0.02
+  //   }
+  // }),
+  data() {
+    return {
+      controls: {
+        scene: null,
+        camera: null,
+        renderer: null,
+        rotationSpeed: 0.02
+      }
     }
-  }),
+  },
   created () {
     this.$nextTick(() => {
       this.init()
@@ -24,10 +34,10 @@ export default {
   },
   methods: {
     init () {
-      let {initMesh, controls} = this
+      // let {initMesh, controls} = this
       const gui = new dat.GUI() // gui监测器
-      gui.add(controls, 'rotationSpeed', 0, 0.5)
-      initMesh()
+      gui.add(this.controls, 'rotationSpeed', 0, 0.5)
+      this.initMesh()
     },
     initMesh () {
       this.scene = new THREE.Scene() // 场景

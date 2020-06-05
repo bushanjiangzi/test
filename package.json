@@ -10,6 +10,7 @@
   "dependencies": {
     "core-js": "^3.6.5",
     "dat.gui": "^0.7.7",
+    "gl-matrix": "^3.3.0",
     "three": "^0.117.1",
     "tween": "^0.9.0",
     "vue": "^2.6.11",
@@ -30,8 +31,7 @@
       "node": true
     },
     "extends": [
-      "plugin:vue/essential",
-      "eslint:recommended"
+      "plugin:vue/essential"
     ],
     "parserOptions": {
       "parser": "babel-eslint"
