@@ -6,7 +6,7 @@
 </template>
 
 <script>
-// import Matrix4 from '@/utils/matrix'
+import Matrix4 from '@/utils/matrix'
 import * as THREE from 'three'
 export default {
   data() {
@@ -15,13 +15,13 @@ export default {
     }
   },
   created() {
-    const s = document.createElement('script');
-    s.type = 'text/javascript';
-    s.src = './src/utils/matrix.js';
-    document.body.appendChild(s);
+    // const s = document.createElement('script');
+    // s.type = 'text/javascript';
+    // s.src = './src/utils/matrix.js';
+    // document.body.appendChild(s);
   },
   mounted() {
-    // this.creatCanvas()
+    this.creatAngel()
     this.creatBackground()
   },
   methods: {
