@@ -1,6 +1,7 @@
 <template>
   <div>
     <button @click="login">登录</button>
+    <a href="src/views/indexedDB/loadglft.html">loadglft</a>
   </div>
 </template>
 
