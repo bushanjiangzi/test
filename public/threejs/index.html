@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+<html lang="en">
+	<head>
+		<title>three.js webgl - animation - keyframes</title>
+		<meta charset="utf-8">
+		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<link type="text/css" rel="stylesheet" href="./css/main.css">
+		<style>
+			body {
+				background-color: #bfe3dd;
+				color: #000;
+			}
+
+			a {
+				color: #2983ff;
+			}
+		</style>
+	</head>
+
+	<body>
+		<div id="container"></div>
+
+		<script type="module">
+			import * as THREE from './js/build/three.module.js';
+			import Stats from './js/build/stats.module.js';
+			import { OrbitControls } from './js/controls/OrbitControls.js';
+			import { GLTFLoader } from './js/loaders/GLTFLoader.js';
+			import { DRACOLoader } from './js/loaders/DRACOLoader.js';
+
+			var scene, camera, dirLight, stats;
+			var renderer, mixer, controls;
+			var clock = new THREE.Clock();
+			var container = document.getElementById( 'container' );
+
+			stats = new Stats();
+			container.appendChild( stats.dom );
+
+      // 创建渲染器
+			renderer = new THREE.WebGLRenderer( { antialias: true } );
+			renderer.setPixelRatio( window.devicePixelRatio );
+			renderer.setSize( window.innerWidth, window.innerHeight );
+			renderer.outputEncoding = THREE.sRGBEncoding;
+			container.appendChild( renderer.domElement );
+
+      // 创建场景
+			scene = new THREE.Scene();
+			scene.background = new THREE.Color( 0xbfe3dd );
+
+      // 创建相机
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
+			camera.position.set( 2000, 2000, 0 );
+      // （轨道控制器）可以使得相机围绕目标进行轨道运动
+      controls = new OrbitControls( camera, renderer.domElement );
+			controls.target.set( 0, 20, 0 );
+			controls.update();
+			controls.enablePan = true;
+      controls.enableDamping = true;
+      controls.maxPolarAngle = Math.PI * 0.5;
+      controls.dampingFactor = 0.05;
+      controls.minDistance = 50;
+			controls.maxDistance = 8000;
+
+      // var mapControls = new MapControls( camera, renderer.domElement );
+
+      // 添加环境光
+			var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 ); // soft white light
+      scene.add( ambientLight );
+      // 添加平行光
+			dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
+			dirLight.position.set( 1, 1, 0 );
+			scene.add( dirLight );
+
+      // 添加辅助线
+      var axesHelper = new THREE.AxesHelper( 2000 );
+      scene.add( axesHelper );
+
+			// envmap
+			// var path = 'textures/img/';
+			// var format = '.jpg';
+			// var envMap = new THREE.CubeTextureLoader().load( [
+			// 	path + 'posx' + format, path + 'negx' + format,
+			// 	path + 'posy' + format, path + 'negy' + format,
+			// 	path + 'posz' + format, path + 'negz' + format
+      // ] );
+
+      /**
+       * .load ( url : String, onLoad : Function, onProgress : Function, onError : Function ) : null
+       * url — 包含有.gltf/.glb文件路径/URL的字符串。
+       * onLoad — 加载成功完成后将会被调用的函数。该函数接收parse所返回的已加载的JSON响应。
+       * onProgress — （可选）加载正在进行过程中会被调用的函数。其参数将会是XMLHttpRequest实例，包含有总字节数.total与已加载的字节数.loaded。
+       * onError — （可选）若在加载过程发生错误，将被调用的函数。该函数接收error来作为参数。
+       * 开始从url加载，并使用解析过的响应内容调用回调函数。
+      */
+			var dracoLoader = new DRACOLoader();
+			dracoLoader.setDecoderPath( './js/draco/' );
+			var loader = new GLTFLoader();
+			loader.setDRACOLoader( dracoLoader );
+			loader.load( 'models/bgs2.gltf', function ( gltf ) {
+
+				var model = gltf.scene;
+				model.position.set( 0, -80, 0 );
+        model.scale.set( 0.5, 0.5, 0.5 );
+        model.castShadow = true;
+        model.receiveShadow = true;
+				// model.traverse( function ( child ) {
+				// 	if ( child.isMesh ) child.material.envMap = envMap;
+				// } );
+				scene.add( model );
+
+				animate();
+			}, onProgress, function ( e ) {
+				console.error( e );
+      } );
+            
+      var onProgress = function(xhr) {
+        if (xhr.lengthComputable) {
+          var percentComplete = xhr.loaded / xhr.total * 100;
+          console.log(Math.round(percentComplete, 2) + '% downloaded');
+        }
+      };
+
+
+      // 浏览器窗口大小改变时触发
+			window.onresize = function () {
+        // console.log('window.onresize')
+				camera.aspect = window.innerWidth / window.innerHeight;
+				camera.updateProjectionMatrix();
+				renderer.setSize( window.innerWidth, window.innerHeight );
+			};
+
+			function animate() {
+        // console.log('animate')
+				requestAnimationFrame( animate );
+				// var delta = clock.getDelta();
+        controls.update();
+        // mapControls.update();
+				stats.update();
+				renderer.render( scene, camera );
+			}
+		</script>
+	</body>
+</html>
