@@ -3,10 +3,10 @@
   </div>
 </template>
 <script>
-import * as THREE from "three";
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
-import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
+// import * as THREE from "three";
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+// import { OrbitControls } from "three/examples/jsm/controls/OrbitControls";
 export default {
   name: "vue-three",
   data() {
@@ -48,7 +48,7 @@ export default {
       var dracoLoader = new DRACOLoader();
       dracoLoader.setDecoderPath( '/draco/' );
       loader.setDRACOLoader( dracoLoader );
-      loader.load("module.gltf", function(gltf) {
+      loader.load("./luyu.gltf", function(gltf) {
         var mesh = gltf.scene.children[0];
         mesh.scale.set(10, 10, 10);
         self.scene.add(mesh); // 将模型引入three

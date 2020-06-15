@@ -54,6 +54,10 @@ module.exports = {
         }
       ]
     })
+    config.externals = {
+      // 'DRACOLoader': 'DRACOLoader',
+      // 'GLTFLoader': 'GLTFLoader'
+    }
   },
   // vue-loader 配置项
   // https://vue-loader.vuejs.org/en/options.html
