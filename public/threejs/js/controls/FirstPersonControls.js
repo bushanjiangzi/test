@@ -69,7 +69,8 @@ var FirstPersonControls = function ( object, domElement ) {
 	var spherical = new Spherical();
   var target = new Vector3();
   
-  // my attribute
+	// my attribute
+	this.isListen = true
   this.minDistance = 0;
   this.maxDistance = 10000
   this.cameraPositionX = 0

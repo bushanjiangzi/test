@@ -107,7 +107,7 @@
       // firstPersonControl.heightMin = 10;
 
       // 添加环境光
-			var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 ); // soft white light
+			var ambientLight = new THREE.AmbientLight( 0xffffff, 0.2 ); // soft white light
 			scene.add( ambientLight );
 			/**
        * 设置平行光
@@ -118,7 +118,7 @@
        * 
       */
 			dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
-			dirLight.position.set( 1, 1, 0 );
+			dirLight.position.set( 1, 1, 1 );
 			scene.add( dirLight );
 
        // 辅助轴:红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴.
@@ -151,16 +151,17 @@
 			var loader = new GLTFLoader();
 			loader.setDRACOLoader( dracoLoader );
 			loader.load( 'models/bgs2.gltf', function ( gltf ) {
-
 				var model = gltf.scene;
 				model.position.set( 0, 0, 0 );
         model.scale.set( 0.5, 0.5, 0.5 );
-        model.castShadow = true;
-				model.receiveShadow = true;
-				// 遍历贴图
-				// model.traverse( function ( child ) {
-				// 	if ( child.isMesh ) child.material.envMap = envMap;
-				// } );
+				// 遍历模型节点
+				model.traverse( function ( child ) {
+					if ( child.isMesh ) {
+						// child.material.envMap = envMap;
+						model.castShadow = true;
+						model.receiveShadow = true;
+					} 
+				} );
 				scene.add( model );
 
 				animate();
@@ -181,8 +182,12 @@
         var emeraldModel = gltf.scene;
         emeraldModel.position.set( 1000, 100, 1000 );
         emeraldModel.scale.set( 1, 1, 1 );
-        emeraldModel.castShadow = true;
-        emeraldModel.receiveShadow = true;
+				emeraldModel.traverse( function ( child ) {
+					if ( child.isMesh ) {
+						emeraldModel.castShadow = true;
+						emeraldModel.receiveShadow = true;
+					} 
+				} );
         scene.add( emeraldModel );
 
         animate();
@@ -212,6 +217,8 @@
         firstPersonControl.update( delta );
         // controls.update();
 				stats.update();
+				renderer.shadowMap.enabled = true
+    		renderer.shadowMap.type = THREE.PCFShadowMap
 				renderer.render( scene, camera );
 			}
 		</script>
