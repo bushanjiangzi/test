@@ -22,9 +22,11 @@
 		<div id="container"></div>
 
 		<script type="module">
+      // import * as THREE from ''
       import * as THREE from './js/build/three.module.js';
 			import Stats from './js/build/stats.module.js';
-			import { OrbitControls } from './js/controls/OrbitControls.js';
+      import { OrbitControls } from './js/controls/OrbitControls.js';
+      import { FirstPersonControls } from './js/controls/FirstPersonControls.js';
 			import { GLTFLoader } from './js/loaders/GLTFLoader.js';
 			import { DRACOLoader } from './js/loaders/DRACOLoader.js';
 
@@ -79,15 +81,30 @@
 			 * minDistance - 能够将相机向内移动多少（仅适用于PerspectiveCamera），其默认值为0。
 			 * maxDistance - 能够将相机向外移动多少（仅适用于PerspectiveCamera），其默认值为Infinity。
       */
-      controls = new OrbitControls( camera, renderer.domElement );
-			controls.target.set( 0, 20, 0 );
-			controls.update();
-			controls.enablePan = true;
-      controls.enableDamping = true;
-      controls.maxPolarAngle = Math.PI * 0.5;
-      controls.dampingFactor = 0.05;
-      controls.minDistance = 50;
-			controls.maxDistance = 8000;
+      // controls = new OrbitControls( camera, renderer.domElement );
+			// controls.target.set( 0, 100, 0 );
+			// // controls.update();
+			// controls.enablePan = true;
+      // controls.enableDamping = true;
+      // controls.maxPolarAngle = Math.PI * 0.5;
+      // controls.dampingFactor = 0.05;
+      // controls.minDistance = 50;
+      // controls.maxDistance = 8000;
+      
+      /**
+       * FirstPersonControls( object : Camera, domElement : HTMLDOMElement )
+       * movementSpeed - The movement speed. Default is 1.
+       * lookSpeed - The look around speed. Default is 0.005.
+       * lookVertical - Whether or not it's possible to vertically look around. Default is true.
+      */
+      var firstPersonControl = new FirstPersonControls( camera, renderer.domElement );
+      firstPersonControl.movementSpeed = 500;
+      firstPersonControl.lookSpeed = 0.05;
+      firstPersonControl.lookVertical = true;
+      firstPersonControl.verticalMax = Math.PI * 0.5;
+      firstPersonControl.lookAt( 0, 100, 0 );
+      // firstPersonControl.heightMax = 10;
+      // firstPersonControl.heightMin = 10;
 
       // 添加环境光
 			var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 ); // soft white light
@@ -130,13 +147,13 @@
        * 开始从url加载，并使用解析过的响应内容调用回调函数。
       */
 			var dracoLoader = new DRACOLoader();
-			dracoLoader.setDecoderPath( './js/draco/' );
+			dracoLoader.setDecoderPath( 'js/draco/' );
 			var loader = new GLTFLoader();
 			loader.setDRACOLoader( dracoLoader );
 			loader.load( 'models/bgs2.gltf', function ( gltf ) {
 
 				var model = gltf.scene;
-				model.position.set( 0, -80, 0 );
+				model.position.set( 0, 0, 0 );
         model.scale.set( 0.5, 0.5, 0.5 );
         model.castShadow = true;
 				model.receiveShadow = true;
@@ -165,7 +182,8 @@
         // console.log('window.onresize')
 				camera.aspect = window.innerWidth / window.innerHeight;
 				camera.updateProjectionMatrix();
-				renderer.setSize( window.innerWidth, window.innerHeight );
+        renderer.setSize( window.innerWidth, window.innerHeight );
+        firstPersonControl.handleResize();
 			};
 
 			/**
@@ -176,8 +194,9 @@
 			function animate() {
         // console.log('animate')
 				requestAnimationFrame( animate );
-				// var delta = clock.getDelta();
-        controls.update();
+        var delta = clock.getDelta();
+        firstPersonControl.update( delta );
+        // controls.update();
 				stats.update();
 				renderer.render( scene, camera );
 			}
