@@ -122,6 +122,7 @@ var importModel = function() {
       } 
     } );
     scene.add( model );
+    objects.push(model)
 
     animate();
   }, onProgress, function ( e ) {
@@ -148,6 +149,7 @@ var importModel = function() {
       } 
     } );
     scene.add( emeraldModel );
+    objects.push(emeraldModel)
     animate();
   }, undefined, function ( e ) {
     console.error( e );
@@ -172,8 +174,11 @@ var importModel = function() {
         moveRight = true;
         break;
       case 32: // space
-        if ( canJump === true ) velocity.y += 350;
-        canJump = false;
+        if ( canJump === true ) {
+          velocity.y += 350;
+          canJump = false;
+          console.log('canJump');
+        }
         break;
     }
   };
@@ -274,13 +279,14 @@ var importModel = function() {
     if ( controls.isLocked === true ) {
       raycaster.ray.origin.copy( controls.getObject().position );
       raycaster.ray.origin.y -= 10;
-      var intersections = raycaster.intersectObjects( scene.children );
+      var intersections = raycaster.intersectObjects( objects );
       var onObject = intersections.length > 0;
       var time = performance.now();
       var delta = ( time - prevTime ) / 1000;
       velocity.x -= velocity.x * 10.0 * delta;
       velocity.z -= velocity.z * 10.0 * delta;
-      velocity.y -= 9.8 * 200.0 * delta; // 100.0 = mass
+      velocity.y -= 9.8 * 100 * delta; // 100.0 = mass
+      // console.log('delta:', delta)
       direction.z = Number( moveForward ) - Number( moveBackward );
       direction.x = Number( moveRight ) - Number( moveLeft );
       direction.normalize(); // this ensures consistent movements in all directions
@@ -293,7 +299,7 @@ var importModel = function() {
       controls.moveRight( - velocity.x * delta );
       controls.moveForward( - velocity.z * delta );
       controls.getObject().position.y += ( velocity.y * delta ); // new behavior
-      if ( controls.getObject().position.y < 50 ) {
+      if ( controls.getObject().position.y < 54 ) {
         velocity.y = 0;
         controls.getObject().position.y = 50;
         canJump = true;
