@@ -1,11 +1,15 @@
-import * as THREE from 'three'
-import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
-import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+// import * as THREE from 'three'
+// import { GLTFLoader } from "three/examples/jsm/loaders/GLTFLoader";
+// import { DRACOLoader } from "three/examples/jsm/loaders/DRACOLoader";
+
+import * as THREE from './js/build/three.module'
+import { GLTFLoader } from "./js/loaders/GLTFLoader";
+import { DRACOLoader } from "./js/loaders/DRACOLoader";
 
 // 代表子线程自身，即子线程的全局对象。self.addEventListener()指定监听函数，也可以使用self.onmessage指定。
 // Worker 内部如果要加载其他脚本，有一个专门的方法importScripts()。
 self.addEventListener('message', function(e) {
-  // importScripts('module/loaders/three.js', 'module/loaders/GLTFLoader.js', 'module/loaders/DRACOLoader.js');
+  // importScripts('./js/build/three.js', './js/loaders/GLTFLoader.js', './js/loaders/DRACOLoader.js');
   console.log("webwork")
   var dbname = "module"
   loadgltf(new THREE.Scene())
@@ -20,9 +24,9 @@ function loadgltf(scene) {
   };
   var gltfloader = new GLTFLoader()
   var dracoLoader = new DRACOLoader()
-  dracoLoader.setDecoderPath( '/draco/' );
+  dracoLoader.setDecoderPath( 'js/draco/' );
   gltfloader.setDRACOLoader(dracoLoader);
-  gltfloader.load('module.gltf', function(gltf) {
+  gltfloader.load('models/emerald.gltf', function(gltf) {
     console.log('webwork gltfloader')
     var object = gltf.scene
     var objBbox = new THREE.Box3().setFromObject(gltf.scene);

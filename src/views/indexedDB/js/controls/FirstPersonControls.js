@@ -70,7 +70,7 @@ var FirstPersonControls = function ( object, domElement ) {
   var target = new Vector3();
   
 	// my attribute
-	this.isListen = false
+	this.isListen = true
   this.minDistance = 0;
   this.maxDistance = 10000
   this.cameraPositionX = 0
@@ -362,7 +362,7 @@ var FirstPersonControls = function ( object, domElement ) {
   var _onMouseWheel = bind(this, this.onMouseWheel)
 
 	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-	// this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
+	this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
 	this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
   this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
   this.domElement.addEventListener( 'wheel', _onMouseWheel, false );

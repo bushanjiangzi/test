@@ -1,17 +1,12 @@
 <template>
   <div>
     <button @click="login">登录</button>
-    <a href="src/views/indexedDB/loadglft.html">loadglft</a>
   </div>
 </template>
 
 <script>
-// import work from './index'
 // import work from '@/views/indexedDB/work.js'
-// import Worker from './file.worker.js';
-// import Worker from 'worker-loader!./Worker.js';
-import Worker from './work6.worker.js';
-// import myWorker from './app.js';
+import Worker from './work11.worker.js';
 export default {
   name: 'Login',
   data() {

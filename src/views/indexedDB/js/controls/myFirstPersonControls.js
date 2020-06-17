@@ -47,10 +47,16 @@ var FirstPersonControls = function ( object, domElement ) {
 
 	// internals
 
-	this.autoSpeedFactor = 0.0;
+  this.autoSpeedFactor = 0.0;
+  
+  this.pageX = 0;
+  this.pageY = 0;
 
 	this.mouseX = 0;
-	this.mouseY = 0;
+  this.mouseY = 0;
+  
+  this.detaSpeed = 0
+  this.verticalSpeed = 1
 
 	this.moveForward = false;
 	this.moveBackward = false;
@@ -60,22 +66,14 @@ var FirstPersonControls = function ( object, domElement ) {
 	this.viewHalfX = 0;
 	this.viewHalfY = 0;
 
-  // private variables
+	// private variables
 
 	var lat = 0;
 	var lon = 0;
 
 	var lookDirection = new Vector3();
 	var spherical = new Spherical();
-  var target = new Vector3();
-  
-	// my attribute
-	this.isListen = false
-  this.minDistance = 0;
-  this.maxDistance = 10000
-  this.cameraPositionX = 0
-  this.cameraPositionY = 0
-  this.cameraPositionZ = 0
+	var target = new Vector3();
 
 	//
 
@@ -119,7 +117,7 @@ var FirstPersonControls = function ( object, domElement ) {
 			switch ( event.button ) {
 
 				case 0: this.moveForward = true; break;
-				// case 2: this.moveBackward = true; break;
+				case 2: this.moveBackward = true; break;
 
 			}
 
@@ -139,7 +137,7 @@ var FirstPersonControls = function ( object, domElement ) {
 			switch ( event.button ) {
 
 				case 0: this.moveForward = false; break;
-				case 2: this.dispose(); break;
+				case 2: this.moveBackward = false; break;
 
 			}
 
@@ -147,38 +145,32 @@ var FirstPersonControls = function ( object, domElement ) {
 
 		this.mouseDragOn = false;
 
-	};
-
-	this.onMouseMove = function ( event ) {
-
-		if ( this.domElement === document ) {
-
-			this.mouseX = event.pageX - this.viewHalfX;
-			this.mouseY = event.pageY - this.viewHalfY;
-
-		} else {
-
-			this.mouseX = event.pageX - this.domElement.offsetLeft - this.viewHalfX;
-			this.mouseY = event.pageY - this.domElement.offsetTop - this.viewHalfY;
-
-		}
-
   };
   
-  this.onMouseWheel = function (event) {
-    // console.log(event, event.deltaY)
-    if (event.deltaY < 0) {
-      this.moveBackward = false
-      this.moveForward = true;
-    } else {
-      this.moveForward = false;
-      this.moveBackward = true;
-    }
-    setTimeout(() => {
-      this.moveForward = false;
-      this.moveBackward = false;
-    }, 100)
+  this.mouseMove = function ( event ) {
+    this.pageX = event.pageX
+    this.pageY = event.pageY
   }
+
+	this.onMouseMove = function ( type ) {
+      this.mouseX = Math.abs(this.pageX - this.viewHalfX)
+      this.mouseY = Math.abs(this.pageY - this.viewHalfY)
+      switch(type) {
+        case 'top':
+          if ( this.lookVertical ) lat += this.mouseY * this.detaSpeed * this.verticalSpeed;
+          break;
+        case 'bottom':
+          if ( this.lookVertical ) lat -= this.mouseY * this.detaSpeed * this.verticalSpeed;
+          break;
+        case 'left':
+          lon += this.mouseX * this.detaSpeed;
+          break;
+        case 'right':
+          lon -= this.mouseX * this.detaSpeed;
+          break;
+      }
+
+		};
 
 	this.onKeyDown = function ( event ) {
 
@@ -186,20 +178,21 @@ var FirstPersonControls = function ( object, domElement ) {
 
 		switch ( event.keyCode ) {
 
-			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = true; break;
+      // 箭头控制
+			case 37: /*left 左移*/ this.moveLeft = true; break;
+      case 38: /*up 放大*/ this.moveForward = true; break;
+      case 39: /*right 右移*/ this.moveRight = true; break;
+      case 40: /*down 缩小*/ this.moveBackward = true; break;
 
-			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = true; break;
-
-			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = true; break;
-
-			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = true; break;
-
-			case 82: /*R*/ this.moveUp = true; break;
-			case 70: /*F*/ this.moveDown = true; break;
+      // 上下平移
+      // case 82: /*R 上移*/ this.moveDown = true; break;
+      // case 70: /*F 下移*/ this.moveUp = true; break;
+      
+      // 方向控制
+			case 87: /*W 上转*/ this.onMouseMove('top'); break;
+			case 65: /*A 左转*/ this.onMouseMove('left'); break;
+			case 83: /*S 下转*/ this.onMouseMove('bottom'); break;
+			case 68: /*D 右转*/ this.onMouseMove('right'); break;
 
 		}
 
@@ -208,21 +201,15 @@ var FirstPersonControls = function ( object, domElement ) {
 	this.onKeyUp = function ( event ) {
 
 		switch ( event.keyCode ) {
+      // 箭头控制
+			case 37: /*left 左移*/ this.moveLeft = false; break;
+      case 38: /*up 放大*/ this.moveForward = false; break;
+      case 39: /*right 右移*/ this.moveRight = false; break;
+      case 40: /*down 缩小*/ this.moveBackward = false; break;
 
-			case 38: /*up*/
-			case 87: /*W*/ this.moveForward = false; break;
-
-			case 37: /*left*/
-			case 65: /*A*/ this.moveLeft = false; break;
-
-			case 40: /*down*/
-			case 83: /*S*/ this.moveBackward = false; break;
-
-			case 39: /*right*/
-			case 68: /*D*/ this.moveRight = false; break;
-
-			case 82: /*R*/ this.moveUp = false; break;
-			case 70: /*F*/ this.moveDown = false; break;
+      // 上下平移
+      case 82: /*R 上移*/ this.moveDown = false; break;
+			case 70: /*F 下移*/ this.moveUp = false; break;
 
 		}
 
@@ -254,11 +241,6 @@ var FirstPersonControls = function ( object, domElement ) {
 
 		return function update( delta ) {
 
-      // console.log('this.object.position', this.object.position)
-      this.cameraPositionX = this.object.position.x
-      this.cameraPositionY = this.object.position.y
-      this.cameraPositionZ = this.object.position.z
-
 			if ( this.enabled === false ) return;
 
 			if ( this.heightSpeed ) {
@@ -276,28 +258,17 @@ var FirstPersonControls = function ( object, domElement ) {
 
 			var actualMoveSpeed = delta * this.movementSpeed;
 
-			if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) {
-        this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
-      }
-			if ( this.moveBackward ) {
-        this.object.translateZ( actualMoveSpeed );
-      }
+			if ( this.moveForward || ( this.autoForward && ! this.moveBackward ) ) this.object.translateZ( - ( actualMoveSpeed + this.autoSpeedFactor ) );
+			if ( this.moveBackward ) this.object.translateZ( actualMoveSpeed );
 
-			if ( this.moveLeft ) {
-        this.object.translateX( - actualMoveSpeed );
-      }
-			if ( this.moveRight ) {
-        this.object.translateX( actualMoveSpeed );
-      }
+			if ( this.moveLeft ) this.object.translateX( actualMoveSpeed );
+			if ( this.moveRight ) this.object.translateX( - actualMoveSpeed );
 
-			if ( this.moveUp ) {
-        this.object.translateY( actualMoveSpeed );
-      }
-			if ( this.moveDown) {
-        this.object.translateY( - actualMoveSpeed );
-      }
+			if ( this.moveUp ) this.object.translateY( actualMoveSpeed );
+			if ( this.moveDown ) this.object.translateY( - actualMoveSpeed );
 
-			var actualLookSpeed = delta * this.lookSpeed;
+      var actualLookSpeed = delta * this.lookSpeed;
+      this.detaSpeed = delta * this.lookSpeed;
 
 			if ( ! this.activeLook ) {
 
@@ -309,12 +280,13 @@ var FirstPersonControls = function ( object, domElement ) {
 
 			if ( this.constrainVertical ) {
 
-				verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+        verticalLookRatio = Math.PI / ( this.verticalMax - this.verticalMin );
+        this.verticalSpeed = Math.PI / ( this.verticalMax - this.verticalMin );
 
 			}
 
-			lon -= this.mouseX * actualLookSpeed;
-			if ( this.lookVertical ) lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
+			// lon -= this.mouseX * actualLookSpeed;
+			// if ( this.lookVertical ) lat -= this.mouseY * actualLookSpeed * verticalLookRatio;
 
 			lat = Math.max( - 85, Math.min( 85, lat ) );
 
@@ -344,29 +316,30 @@ var FirstPersonControls = function ( object, domElement ) {
 	}
 
 	this.dispose = function () {
-    if (this.isListen) {
-      this.mouseX = 0;
-      this.mouseY = 0;
-      this.domElement.removeEventListener( 'mousemove', _onMouseMove, false );
-    } else {
-      this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
-    }
-    this.isListen = !this.isListen
+
+		this.domElement.removeEventListener( 'contextmenu', contextmenu, false );
+		this.domElement.removeEventListener( 'mousedown', _onMouseDown, false );
+		this.domElement.removeEventListener( 'mousemove', _onMouseMove, false );
+		this.domElement.removeEventListener( 'mouseup', _onMouseUp, false );
+
+		window.removeEventListener( 'keydown', _onKeyDown, false );
+		window.removeEventListener( 'keyup', _onKeyUp, false );
+
 	};
 
-	var _onMouseMove = bind( this, this.onMouseMove );
+	var _onMouseMove = bind( this, this.mouseMove );
 	var _onMouseDown = bind( this, this.onMouseDown );
 	var _onMouseUp = bind( this, this.onMouseUp );
 	var _onKeyDown = bind( this, this.onKeyDown );
-  var _onKeyUp = bind( this, this.onKeyUp );
-  var _onMouseWheel = bind(this, this.onMouseWheel)
+	var _onKeyUp = bind( this, this.onKeyUp );
 
+  // 监听鼠标
 	this.domElement.addEventListener( 'contextmenu', contextmenu, false );
-	// this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
-	this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
-  this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
-  this.domElement.addEventListener( 'wheel', _onMouseWheel, false );
+	this.domElement.addEventListener( 'mousemove', _onMouseMove, false );
+	// this.domElement.addEventListener( 'mousedown', _onMouseDown, false );
+	// this.domElement.addEventListener( 'mouseup', _onMouseUp, false );
 
+  // 监听键盘
 	window.addEventListener( 'keydown', _onKeyDown, false );
 	window.addEventListener( 'keyup', _onKeyUp, false );
 
