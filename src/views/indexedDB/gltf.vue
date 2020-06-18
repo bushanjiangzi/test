@@ -1,5 +1,6 @@
 <template>
-  <div id="container">
+  <div>
+    <div id="mycanves"></div>
   </div>
 </template>
 <script>
@@ -16,11 +17,11 @@ export default {
   },
   mounted() {
     var scene, camera, dirLight, stats;
-    var renderer, mixer, controls;
+    var renderer, controls;
 
     // 该对象用于跟踪时间。如果performance.now可用，则 Clock 对象通过该方法实现，否则回落到使用略欠精准的Date.now来实现
     var clock = new THREE.Clock();
-    var container = document.getElementById( 'container' );
+    var container = document.getElementById( 'mycanves' );
 
     // 希望知道实时的FPS信息，从而更好地监测动画效果（见页面左上角）
     // stats = new Stats();
@@ -111,19 +112,6 @@ export default {
     scene.add( axesHelper );
 
     /**
-     * CubeTexture
-     * envmap
-     * 创建一个由6张图片所组成的纹理对象
-    */
-    // var path = 'textures/img/';
-    // var format = '.jpg';
-    // var envMap = new THREE.CubeTextureLoader().load( [
-    // 	path + 'posx' + format, path + 'negx' + format,
-    // 	path + 'posy' + format, path + 'negy' + format,
-    // 	path + 'posz' + format, path + 'negz' + format
-    // ] );
-
-    /**
      * .load ( url : String, onLoad : Function, onProgress : Function, onError : Function ) : null
      * url — 包含有.gltf/.glb文件路径/URL的字符串。
      * onLoad — 加载成功完成后将会被调用的函数。该函数接收parse所返回的已加载的JSON响应。
@@ -132,17 +120,16 @@ export default {
      * 开始从url加载，并使用解析过的响应内容调用回调函数。
     */
     var dracoLoader = new DRACOLoader();
-    dracoLoader.setDecoderPath( 'js/draco/' );
+    dracoLoader.setDecoderPath( 'threejs/js/draco/' );
     var loader = new GLTFLoader();
     loader.setDRACOLoader( dracoLoader );
-    loader.load( 'models/emerald.gltf', function ( gltf ) {
+    loader.load( 'threejs/models/bgs2.gltf', function ( gltf ) {
       var model = gltf.scene;
       model.position.set( 0, 0, 0 );
       model.scale.set( 0.5, 0.5, 0.5 );
       // 遍历模型节点
       model.traverse( function ( child ) {
         if ( child.isMesh ) {
-          // child.material.envMap = envMap;
           model.castShadow = true;
           model.receiveShadow = true;
         } 
@@ -161,25 +148,6 @@ export default {
         console.log(Math.round(percentComplete, 2) + '% downloaded');
       }
     };
-
-    
-    loader.load( 'models/emerald.gltf', function ( gltf ) {
-      var emeraldModel = gltf.scene;
-      emeraldModel.position.set( 1000, 100, 1000 );
-      emeraldModel.scale.set( 1, 1, 1 );
-      emeraldModel.traverse( function ( child ) {
-        if ( child.isMesh ) {
-          emeraldModel.castShadow = true;
-          emeraldModel.receiveShadow = true;
-        } 
-      } );
-      scene.add( emeraldModel );
-
-      animate();
-    }, undefined, function ( e ) {
-      console.error( e );
-    } );
-
 
     // 浏览器窗口大小改变时触发
     window.onresize = function () {
