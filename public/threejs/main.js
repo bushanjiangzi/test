@@ -3,12 +3,12 @@ import Stats from './js/build/stats.module.js';
 import { PointerLockControls } from './js/controls/PointerLockControls.js';
 import { GLTFLoader } from './js/loaders/GLTFLoader.js';
 import { DRACOLoader } from './js/loaders/DRACOLoader.js';
-import CubicBezierAnimation from './utils/CubicBezierAnimation.js'
+import CubicBezierAnimation from './animate/CubicBezierAnimation.js'
+import CreateModel from './utils/CreateModel.js'
 
-
-var importModel = function() {
+var mainFunction = function() {
   var scene, camera, dirLight, stats;
-  var renderer, mixer, controls;
+  var renderer, controls;
   var objects = [];
   var moveForward = false;
   var moveBackward = false;
@@ -60,30 +60,29 @@ var importModel = function() {
   camera.position.set( 2000, 2000, 0 );
   camera.lookAt(new THREE.Vector3(0, 100, 0))
   // camera.position.set( 0, 60, -1000 );
-  // camera.lookAt(1000, 500, 0)
   
   /**
-   * FirstPersonControls( object : Camera, domElement : HTMLDOMElement )
-   * movementSpeed - The movement speed. Default is 1.
-   * lookSpeed - The look around speed. Default is 0.005.
-   * lookVertical - Whether or not it's possible to vertically look around. Default is true.
+   * PointerLockControls( camera : Camera, domElement : HTMLDOMElement )
+   * lock - Fires when the pointer lock status is "locked" (in other words: the mouse is captured).
+   * unlock - Fires when the pointer lock status is "unlocked" (in other words: the mouse is not captured anymore).
   */
   controls = new PointerLockControls( camera, document.body );
   scene.add( controls.getObject() );
 
   // 添加环境光
-  var ambientLight = new THREE.AmbientLight( 0xffffff, 0.2 ); // soft white light
+  var ambientLight = new THREE.AmbientLight( 0xffffff, 0.3 ); // soft white light
   scene.add( ambientLight );
   /**
    * 设置平行光
    * DirectionalLight( color : Integer, intensity : Float )
+   * 平行光的方向是从它的位置到目标位置。默认的目标位置为原点 (0,0,0)。
    * color - (可选参数) 16进制表示光的颜色。 缺省值为 0xffffff (白色)。
    * intensity - (可选参数) 光照的强度。缺省值为1。
    * position.set() - 设置平行光的方向
    * 
   */
   dirLight = new THREE.DirectionalLight( 0xffffff, 1 );
-  dirLight.position.set( 1, 1, 1 );
+  dirLight.position.set( 0, 1, 0 );
   scene.add( dirLight );
 
   // 辅助轴:红色代表 X 轴. 绿色代表 Y 轴. 蓝色代表 Z 轴.
@@ -125,17 +124,16 @@ var importModel = function() {
     scene.add( model );
     objects.push(model)
 
+    // 模型加载完的入场动画
     setTimeout(() => {
-      var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(0, 60, -1000), new THREE.Vector3(0, 100, 0), 60);
+      var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0),new THREE.Vector3(100, 60, -960), 100);
       flyInto.animation()
-      // scene.add(flyInto.lineMesh);
-      // setTimeout(() => {
-      //   flyInto.stop()
-      // }, 2000)
-      // setTimeout(() => {
-      //   flyInto.continune()
-      // }, 4000)
     }, 1000)
+    setTimeout(() => {
+      addListner();
+      controls.lock();
+      isNeedLock = false
+    }, 5000)
 
     animate();
   }, onProgress, function ( e ) {
@@ -150,7 +148,6 @@ var importModel = function() {
     }
   };
 
-  
   loader.load( 'models/emerald.gltf', function ( gltf ) {
     var emeraldModel = gltf.scene;
     emeraldModel.position.set( 1000, 100, 1000 );
@@ -168,6 +165,11 @@ var importModel = function() {
     console.error( e );
   } );
 
+  // 添加自定义模型
+  // var createModels = new CreateModel(scene)
+  // createModels.createSky()
+
+  // 事件监听函数
   var onKeyDown = function ( event ) {
     switch ( event.keyCode ) {
       case 38: // up
@@ -218,22 +220,15 @@ var importModel = function() {
 
   };
 
-  // 事件监听
-  document.addEventListener( 'keydown', onKeyDown, false );
-  document.addEventListener( 'keyup', onKeyUp, false );
-	document.addEventListener( 'contextmenu', function(event) {
-    event.preventDefault();
-  }, false );
-
-  document.addEventListener( 'mousedown', function ( event ) {
+  var onMouseDown = function ( event ) {
 		event.preventDefault();
     event.stopPropagation();
     switch ( event.button ) {
       case 0: moveForward = true; break;
     }
-  }, false );
+  }
 
-  document.addEventListener( 'mouseup', function ( event ) {
+  var onMouseUp = function ( event ) {
 		event.preventDefault();
     event.stopPropagation();
     switch ( event.button ) {
@@ -248,10 +243,9 @@ var importModel = function() {
         }
         break;
     }
-  }, false );
+  }
 
-  document.addEventListener( 'wheel', function (event) {
-    // console.log(event, event.deltaY)
+  var onWheel = function (event) {
     if (event.deltaY < 0) {
       moveBackward = false
       moveForward = true;
@@ -263,15 +257,16 @@ var importModel = function() {
       moveForward = false;
       moveBackward = false;
     }, 100)
-  }, false );
+  }
 
-  controls.addEventListener( 'lock', function () {
-    console.log('lock')
-  } );
-
-  controls.addEventListener( 'unlock', function () {
-    console.log('unlock')
-  } );
+  // 添加事件监听
+  var addListner = function() {
+    document.addEventListener( 'keydown', onKeyDown, false );
+    document.addEventListener( 'keyup', onKeyUp, false );
+    document.addEventListener( 'mousedown', onMouseDown, false );
+    document.addEventListener( 'mouseup', onMouseUp, false );
+    document.addEventListener( 'wheel', onWheel, false );
+  }
 
   // 浏览器窗口大小改变时触发
   window.onresize = function () {
@@ -323,7 +318,6 @@ var importModel = function() {
     renderer.shadowMap.type = THREE.PCFShadowMap
     renderer.render( scene, camera );
   }
-
 }
 
-export default importModel
+export default mainFunction

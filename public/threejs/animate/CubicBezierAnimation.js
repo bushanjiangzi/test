@@ -4,10 +4,11 @@ import * as THREE from '../js/build/three.module.js';
  * 三维三次贝塞尔曲线动画构造函数
  * camera - 相机
  * end - 终点位置（三维向量）
- * target - 相机的朝向（三维向量）
+ * target1 - 运动过程中相机的朝向（三维向量）
+ * target2 - 相机最终的朝向（三维向量）
  * frameNum - 帧数
 */
-var CubicBezierAnimation = function (camera, end, target, frameNum) {
+var CubicBezierAnimation = function (camera, end, target1, target2, frameNum) {
   //获取当前camera位置
   this.startPosition = camera.position; // 获取摄像机当前位置
   this.endPosition = end; // 设置终点位置
@@ -63,17 +64,18 @@ var CubicBezierAnimation = function (camera, end, target, frameNum) {
     return v1.lerp(v2, len / LenV12);
   }
 
-  //摄像机每50毫秒移动一个点的位置
+  //摄像机每40毫秒移动一个点的位置
   this.animation = function()  {
     times = setInterval (function () {
       camera.position.set(points[index].x,points[index].y,points[index].z);
       // console.log(index);
-      camera.lookAt(target)
-      index++;
+      camera.lookAt(target1)
+      index ++;
       if (index > frameNum) {
+        camera.lookAt(target2)
         clearInterval(times);
       }
-    }, 50);
+    }, 40);
   }
   // 暂停动画
   this.stop = function() {

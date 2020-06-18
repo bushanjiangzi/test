@@ -37,6 +37,9 @@ var PointerLockControls = function ( camera, domElement ) {
 
 	var vec = new Vector3();
 
+  document.addEventListener( 'contextmenu', function(event) {
+    event.preventDefault();
+  }, false );
 	function onMouseMove( event ) {
 
 		if ( scope.isLocked === false ) return;
