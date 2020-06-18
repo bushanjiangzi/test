@@ -6,7 +6,7 @@
 
 <script>
 // import work from '@/views/indexedDB/work.js'
-import Worker from './work11.worker.js';
+import Worker from './work12.worker.js';
 export default {
   name: 'Login',
   data() {

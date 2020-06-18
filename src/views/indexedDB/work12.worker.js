@@ -26,7 +26,7 @@ function loadgltf(scene) {
   var dracoLoader = new DRACOLoader()
   dracoLoader.setDecoderPath( 'js/draco/' );
   gltfloader.setDRACOLoader(dracoLoader);
-  gltfloader.load('models/emerald.gltf', function(gltf) {
+  gltfloader.load('../../../public/threejs/models/emerald.gltf', function(gltf) {
     console.log('webwork gltfloader')
     var object = gltf.scene
     var objBbox = new THREE.Box3().setFromObject(gltf.scene);

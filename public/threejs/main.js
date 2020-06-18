@@ -3,6 +3,8 @@ import Stats from './js/build/stats.module.js';
 import { PointerLockControls } from './js/controls/PointerLockControls.js';
 import { GLTFLoader } from './js/loaders/GLTFLoader.js';
 import { DRACOLoader } from './js/loaders/DRACOLoader.js';
+import CubicBezierAnimation from './utils/CubicBezierAnimation.js'
+
 
 var importModel = function() {
   var scene, camera, dirLight, stats;
@@ -56,10 +58,9 @@ var importModel = function() {
   */
   camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 10000 );
   camera.position.set( 2000, 2000, 0 );
-  camera.lookAt(0, 100, 0)
+  camera.lookAt(new THREE.Vector3(0, 100, 0))
   // camera.position.set( 0, 60, -1000 );
   // camera.lookAt(1000, 500, 0)
-
   
   /**
    * FirstPersonControls( object : Camera, domElement : HTMLDOMElement )
@@ -123,6 +124,18 @@ var importModel = function() {
     } );
     scene.add( model );
     objects.push(model)
+
+    setTimeout(() => {
+      var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(0, 60, -1000), new THREE.Vector3(0, 100, 0), 60);
+      flyInto.animation()
+      // scene.add(flyInto.lineMesh);
+      // setTimeout(() => {
+      //   flyInto.stop()
+      // }, 2000)
+      // setTimeout(() => {
+      //   flyInto.continune()
+      // }, 4000)
+    }, 1000)
 
     animate();
   }, onProgress, function ( e ) {
