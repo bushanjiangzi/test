@@ -105,21 +105,14 @@ var mainFunction = function() {
   */
   var indexDB = new CreateIndexDB()
   indexDB.createDB().then(res => {
-    if (res) {
-      indexDB.getModel(scene)
-      // 模型加载完的入场动画
-      setTimeout(() => {
-        var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0),new THREE.Vector3(100, 60, -960), 100);
-        flyInto.animation()
-      }, 1000)
-      setTimeout(() => {
-        addListner();
-      }, 6500)
-
-      animate();
-    } else {
-      loadModel()
-    }
+    indexDB.getModel(scene).then((res) => {
+      loadSuccess()
+    }).catch((err) => {
+      console.log(err)
+    })
+  }).catch( (err) => {
+    console.log(err)
+    loadModel()
   })
 
   /**
@@ -146,19 +139,11 @@ var mainFunction = function() {
           model.receiveShadow = true;
         } 
       } );
-      // scene.add( model );
+      scene.add( model );
       objects.push(model)
+      indexDB.writeInBD(JSON.stringify(model))
 
-      // 模型加载完的入场动画
-      setTimeout(() => {
-        var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0),new THREE.Vector3(100, 60, -960), 100);
-        flyInto.animation()
-      }, 1000)
-      setTimeout(() => {
-        addListner();
-      }, 6500)
-
-      animate();
+      loadSuccess()
     }, onProgress, function ( e ) {
       console.error( e );
     } );
@@ -175,6 +160,18 @@ var mainFunction = function() {
   // 添加自定义模型
   // var createModels = new CreateModel(scene)
   // createModels.createSky()
+
+  var loadSuccess = function() {
+    // 模型加载完的入场动画
+    setTimeout(() => {
+      var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0),new THREE.Vector3(100, 60, -960), 100);
+      flyInto.animation()
+    }, 1000)
+    setTimeout(() => {
+      addListner();
+    }, 6000)
+    animate();
+  }
 
   // 事件监听函数
   var onKeyDown = function ( event ) {

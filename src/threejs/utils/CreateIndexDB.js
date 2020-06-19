@@ -54,32 +54,34 @@ import * as THREE from '../js/build/three.module.js';
 // }
 
 var CreateIndexDB = function() {
-  var isHaveData = false;
-  var db, dbname = "qxznModel";
-  var timer;
+  let db, dbname = "qxznModel";
+  let timer;
+
   // 创建数据库
   this.createDB = function () {
     return new Promise((resolve, reject) => {
-      var indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
-      var request = indexedDB.open(dbname, "1");
+      let indexedDB = window.indexedDB || window.webkitIndexedDB || window.mozIndexedDB || window.msIndexedDB;
+      let request = indexedDB.open(dbname, "1");
       request.onerror = function(e) {
         console.log(e.currentTarget.error.message);
+        reject(e.currentTarget.error.message)
       };
-    
       request.onsuccess = function(e) {
         db = e.target.result;
-        var store = db.transaction(dbname, 'readwrite').objectStore(dbname)
-        var req = store.get(1)
+        let store = db.transaction(dbname, 'readwrite').objectStore(dbname)
+        let req = store.get(1)
         req.onsuccess = function(event) {
           if (req.result == null) {
-            console.log('没有数据，请请求网络。。。');
-            isHaveData = false;
-            resolve(false)
+            console.log('没有数据，请加载模型。。。');
+            reject('load')
           } else {
             console.log('not need webwork');
-            isHaveData = true;
-            resolve(true)
+            resolve()
           };
+        }
+        req.onerror = function(event) {
+          console.log(event)
+          reject(event)
         }
       }
       request.onupgradeneeded = function(e) {
@@ -90,7 +92,7 @@ var CreateIndexDB = function() {
       }
     })
   }
-  // createDB()
+
   // 写入数据库
   this.writeInBD = function(str) {
     let store = db.transaction(dbname, 'readwrite').objectStore(dbname)
@@ -101,31 +103,31 @@ var CreateIndexDB = function() {
     store.put(data)
     console.log('model store success');
   }
+
   // 读取模型添加到场景中
   this.getModel = function (scene) {
-    timer = setInterval(() => {
-      readData(scene)
-    }, 1000);
-  }
-  var readData = function (scene) {
-    let store = db.transaction(dbname, 'readwrite').objectStore(dbname)
-    let req = store.get(1)
-    req.onsuccess = function(event) {
-      if (req.result) {
-        new THREE.ObjectLoader().parse(req.result["content"], function(object ) {
-          // console.log(object )
-          scene.add(object)
-          object.scale.set(0.5, 0.5, 0.5);
-          object.position.set( 0, 0, 0 );
-        });
-        clearInterval(timer)
-      } else {
-        console.log("no data")
+    return new Promise((resolve, reject) => {
+      let store = db.transaction(dbname, 'readwrite').objectStore(dbname)
+      let req = store.get(1)
+      req.onsuccess = function(event) {
+        if (req.result) {
+          new THREE.ObjectLoader().parse(req.result["content"], function(object ) {
+            // console.log(object )
+            scene.add(object)
+            object.scale.set(0.5, 0.5, 0.5);
+            object.position.set( 0, 0, 0 );
+            resolve()
+          });
+        } else {
+          console.log("no data")
+          reject("no data")
+        }
       }
-    }
-    req.onerror = function(event) {
+      req.onerror = function(event) {
         console.log(event)
-    }
+        reject(event)
+      }
+    })
   }
 }
 
