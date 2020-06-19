@@ -182,10 +182,5 @@ export default {
 </script>
 
 <style>
-#container {
-  width: 800px;
-  margin: 0 auto;
-  height: 600px;
-  overflow: hidden;
-}
+
 </style>

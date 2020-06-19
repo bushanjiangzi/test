@@ -4,7 +4,7 @@
   </div>
 </template>
 <script>
-// import mainFunction from '../../../public/threejs/main.js'
+import mainFunction from '@/threejs/main.js'
 export default {
   name: "gltf2",
   data() {

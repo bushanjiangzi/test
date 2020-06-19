@@ -60,7 +60,7 @@ var CubicBezierAnimation = function (camera, end, target1, target2, frameNum) {
   // lerp ( v : Vector3, alpha : Float )在该向量与传入的向量v之间的线性插值，alpha是沿着线的长度的百分比 —— alpha = 0 时表示的是当前向量，alpha = 1 时表示的是所传入的向量v。
   function getLenVcetor(v1, v2, len) {
     let LenV12 = v1.distanceTo(v2);
-    console.log('LenV12:', LenV12, len / LenV12)
+    // console.log('LenV12:', LenV12, len / LenV12)
     return v1.lerp(v2, len / LenV12);
   }
 

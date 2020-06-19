@@ -133,7 +133,7 @@ var mainFunction = function() {
       addListner();
       controls.lock();
       isNeedLock = false
-    }, 5000)
+    }, 5600)
 
     animate();
   }, onProgress, function ( e ) {
