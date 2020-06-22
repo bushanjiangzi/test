@@ -75,7 +75,7 @@ var CreateIndexDB = function() {
             console.log('没有数据，请加载模型。。。');
             reject('load')
           } else {
-            console.log('not need webwork');
+            console.log('模型加载中。。。');
             resolve()
           };
         }
@@ -116,7 +116,7 @@ var CreateIndexDB = function() {
             scene.add(object)
             object.scale.set(0.5, 0.5, 0.5);
             object.position.set( 0, 0, 0 );
-            resolve()
+            resolve(object)
           });
         } else {
           console.log("no data")
