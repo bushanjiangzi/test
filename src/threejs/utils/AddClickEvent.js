@@ -29,7 +29,7 @@ export default class AddClickEvent {
           opacity: 0.8
         })
         positionArr[0].object.material = material
-        console.log('name:', positionArr[0].object.name)
+        console.log('name:', positionArr[0].object.name, 'id:', positionArr[0].object.id)
         this.renderDiv(positionArr[0].object, event)
         console.log('click position:', positionArr[0].point)
       }
@@ -57,6 +57,6 @@ export default class AddClickEvent {
     noticeDiv.style.left = newLeft + 'px'
     noticeDiv.style.top = newTop + 'px'
     // 显示模型信息
-    noticeDiv.innerText = "name:" + object.name
+    noticeDiv.innerText = "name:" + object.name + ";id:" + object.id
   }
 }
