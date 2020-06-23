@@ -41,19 +41,33 @@ module.exports = {
         }
       }
     })
-    config.module.rules.push({
-      test: /\.worker.js$/,
-      exclude: /node_modules/,
-      use: [
-        {
-          loader: 'worker-loader',
-          options: { inline: true, name: 'workerName.[hash].js' }
-        },
-        {
-          loader: "babel-loader"
-        }
-      ]
-    })
+    config.module.rules.push(
+      {
+        test: /\.worker.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'worker-loader',
+            options: { inline: true, name: 'workerName.[hash].js' }
+          },
+          {
+            loader: "babel-loader"
+          }  
+        ]
+      },
+      {
+        test: /\.js$/,
+        exclude: /node_modules/,
+        use: [
+          {
+            loader: 'babel-loader',
+            options:{
+              presets: ['@babel/preset-env']
+            }
+          }
+        ]
+      }
+    )
     config.externals = {
       // 'DRACOLoader': 'DRACOLoader',
       // 'GLTFLoader': 'GLTFLoader'

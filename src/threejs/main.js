@@ -5,7 +5,7 @@ import { GLTFLoader } from './js/loaders/GLTFLoader.js';
 import { DRACOLoader } from './js/loaders/DRACOLoader.js';
 import CubicBezierAnimation from './animate/CubicBezierAnimation.js'
 import CreateIndexDB from './utils/CreateIndexDB'
-// import CreateModel from './utils/CreateModel.js'
+import AddClickEvent from './utils/AddClickEvent'
 // import gltfUrl from './models/bgs2.gltf'
 
 var mainFunction = function() {
@@ -18,7 +18,6 @@ var mainFunction = function() {
   var moveRight = false;
   var canJump = false;
   var isNeedLock = true;
-  var mouse = new THREE.Vector2();
 
   var prevTime = performance.now();
   var velocity = new THREE.Vector3();
@@ -100,8 +99,6 @@ var mainFunction = function() {
    * far —— 返回的所有结果都比far近。far不能小于near，其默认值为Infinity（正无穷。）
   */
   var raycaster = new THREE.Raycaster( new THREE.Vector3(), new THREE.Vector3( 0, -1, 0 ), 0, 100 );
-  var findPosition = new THREE.Raycaster();
-  findPosition.far = 1000
 
   /**
    * 创建浏览器数据库
@@ -109,8 +106,8 @@ var mainFunction = function() {
   var indexDB = new CreateIndexDB()
   indexDB.createDB().then(res => {
     indexDB.getModel(scene).then((res) => {
-      loadSuccess()
       objects.push(res)
+      loadSuccess()
     }).catch((err) => {
       console.log(err)
     })
@@ -179,8 +176,6 @@ var mainFunction = function() {
 
   // 事件监听函数
   var onKeyDown = function ( event ) {
-    // var positionArr = findPosition.intersectObjects( objects );
-    // console.log(positionArr)
     switch ( event.keyCode ) {
       case 38: // up
       case 87: // w
@@ -234,7 +229,9 @@ var mainFunction = function() {
 		event.preventDefault();
     event.stopPropagation();
     switch ( event.button ) {
-      case 0: moveForward = true; break;
+      case 0: 
+        moveForward = true; 
+        break;
     }
   }
 
@@ -243,9 +240,6 @@ var mainFunction = function() {
     event.stopPropagation();
     switch ( event.button ) {
       case 0: 
-        // 计算物体和射线的焦点
-        var intersects = findPosition.intersectObjects( objects );
-        console.log(intersects)
         moveForward = false; 
         break;
       case 2:
@@ -274,12 +268,6 @@ var mainFunction = function() {
     }, 100)
   }
 
-  var onMouseMove = function ( event ) {
-    // 将鼠标位置归一化为设备坐标。x 和 y 方向的取值范围是 (-1 to +1)
-    mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-    mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-  }
-
   // 添加事件监听
   var addListner = function() {
     document.addEventListener( 'keydown', onKeyDown, false );
@@ -287,7 +275,8 @@ var mainFunction = function() {
     document.addEventListener( 'mousedown', onMouseDown, false );
     document.addEventListener( 'mouseup', onMouseUp, false );
     document.addEventListener( 'wheel', onWheel, false );
-    document.addEventListener( 'mousemove', onMouseMove, false );
+    let addClickEvent = new AddClickEvent(camera, controls, objects)
+    addClickEvent.init()
   }
 
   // 浏览器窗口大小改变时触发
@@ -311,9 +300,6 @@ var mainFunction = function() {
       raycaster.ray.origin.y -= 10;
       var intersections = raycaster.intersectObjects( objects );
       var onObject = intersections.length > 0;
-      // var positionArr = findPosition.intersectObjects( objects );
-      // 通过摄像机和鼠标位置更新射线
-      findPosition.setFromCamera( mouse, camera );
       var time = performance.now();
       var delta = ( time - prevTime ) / 1000;
       velocity.x -= velocity.x * 10.0 * delta;

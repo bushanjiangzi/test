@@ -145,7 +145,7 @@ class Matrix4 {
     
     return this;
   };
-  multiply = this.concat;
+  // multiply = this.concat;
 
   /**
    * Multiply the three-dimensional vector.

@@ -8,6 +8,8 @@
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
+    "@babel/polyfill": "^7.10.1",
+    "@babel/runtime": "^7.10.3",
     "core-js": "^3.6.5",
     "dat.gui": "^0.7.7",
     "gl-matrix": "^3.3.0",
@@ -17,10 +19,16 @@
     "vue-router": "^3.3.2"
   },
   "devDependencies": {
+    "@babel/core": "^7.10.3",
+    "@babel/plugin-transform-runtime": "^7.10.3",
+    "@babel/preset-env": "^7.10.3",
+    "@babel/preset-flow": "^7.10.1",
+    "@babel/runtime-corejs3": "^7.10.3",
     "@vue/cli-plugin-babel": "^4.4.0",
     "@vue/cli-plugin-eslint": "^4.4.0",
     "@vue/cli-service": "^4.4.0",
     "babel-eslint": "^10.1.0",
+    "babel-loader": "^8.1.0",
     "eslint": "^6.7.2",
     "eslint-plugin-vue": "^6.2.2",
     "vue-template-compiler": "^2.6.11",
