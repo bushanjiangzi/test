@@ -17,7 +17,7 @@ export default {
   //     rotationSpeed: 0.02
   //   }
   // }),
-  data() {
+  data () {
     return {
       controls: {
         scene: null,
@@ -54,7 +54,7 @@ export default {
       let axes = new THREE.AxisHelper(20) // 坐标轴
 
       let planeGeometry = new THREE.PlaneGeometry(60, 20, 10, 10) // 生成平面
-      let planeMaterial = new THREE.MeshLambertMaterial({color: 0xffffff}) // 材质
+      let planeMaterial = new THREE.MeshLambertMaterial({ color: 0xffffff }) // 材质
       let plane = new THREE.Mesh(planeGeometry, planeMaterial)
       plane.rotation.x = -0.5 * Math.PI
       plane.position.x = 0
@@ -63,7 +63,7 @@ export default {
       plane.receiveShadow = true
 
       let cubeGeometry = new THREE.CubeGeometry(10, 10, 10)
-      let cubeMaterial = new THREE.MeshLambertMaterial({color: 0xff0000})
+      let cubeMaterial = new THREE.MeshLambertMaterial({ color: 0xff0000 })
       this.cube = new THREE.Mesh(cubeGeometry, cubeMaterial)
       this.cube.position.x = -4
       this.cube.position.y = 3
@@ -83,7 +83,7 @@ export default {
       this.renderScene()
     },
     renderScene () {
-      let {controls, cube, scene, camera, renderer} = this
+      let { controls, cube, scene, camera, renderer } = this
       cube.rotation.x += controls.rotationSpeed
       cube.rotation.y += controls.rotationSpeed
       cube.rotation.z += controls.rotationSpeed

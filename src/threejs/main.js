@@ -6,6 +6,7 @@ import { DRACOLoader } from './js/loaders/DRACOLoader.js';
 import CubicBezierAnimation from './animate/CubicBezierAnimation.js'
 import CreateIndexDB from './utils/CreateIndexDB'
 import AddClickEvent from './utils/AddClickEvent'
+import ImportModels from './utils/ImportModels'
 // import gltfUrl from './models/bgs2.gltf'
 
 var mainFunction = function() {
@@ -103,11 +104,11 @@ var mainFunction = function() {
   /**
    * 创建浏览器数据库
   */
-  var indexDB = new CreateIndexDB()
+  var indexDB = new CreateIndexDB(scene)
   indexDB.createDB().then(res => {
-    indexDB.getModel(scene).then((res) => {
-      objects.push(res)
+    indexDB.getModel().then((res) => {
       loadSuccess()
+      objects.push(res)
     }).catch((err) => {
       console.log(err)
     })
@@ -164,14 +165,15 @@ var mainFunction = function() {
 
   var loadSuccess = function() {
     // 模型加载完的入场动画
-    // setTimeout(() => {
-    //   var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 60, -960), 80);
-    //   flyInto.animation()
-    // }, 500)
+    setTimeout(() => {
+      var flyInto = new CubicBezierAnimation(camera, new THREE.Vector3(-100, 50, -960), new THREE.Vector3(0, 0, 0), new THREE.Vector3(100, 60, -960), 80);
+      flyInto.animation()
+    }, 1000)
     setTimeout(() => {
       addListner();
-    }, 40)
+    }, 4000)
     animate();
+    new ImportModels(scene, objects)
   }
 
   // 事件监听函数

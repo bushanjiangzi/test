@@ -18,7 +18,7 @@ export default {
 
   },
   methods:{
-    login() {
+    login () {
       console.log('login...')
       // window.location.href = '/module'
       // var worker = myWorker.worker()

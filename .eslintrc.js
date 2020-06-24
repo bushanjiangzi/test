@@ -475,7 +475,7 @@ module.exports = {
     // 要求使用箭头函数作为回调
     'prefer-arrow-callback': 0,
     // 要求使用 const 声明那些声明后不再被修改的变量
-  //   'prefer-const': 2,
+    'prefer-const': 0,
     // 采用两组配置对象。第一个对象参数决定了规则适用的解构类型
     'prefer-destructuring': 0,
     // 禁止调用parseInt()或Number.parseInt()使用两个参数调用：一个字符串; 和2（二进制），8（八进制）或16（十六进制）的基数选项。
@@ -559,6 +559,6 @@ module.exports = {
     'yoda': 0,
   },
   globals: {
-    "AMap":"off",
+    "AMap":"readonly",
   },
 }
