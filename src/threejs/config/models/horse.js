@@ -1,6 +1,6 @@
 
 const baseUrl = '../../../threejs/models' // 基本路径
-const scale = [0.1, 0.1, 0.1] // 缩放比例
+const scale = [0.3, 0.3, 0.3] // 缩放比例
 const rotationY = Math.PI / 2 // 旋转角度
 
 /**
@@ -16,21 +16,21 @@ const horse = [
   {
     url: baseUrl + '/horse.glb',
     name: '宝马',
-    position: [0, 60, -960],
+    position: [0, 20, -960],
     scale,
     parent: 'horse',
     rotationY,
     children: [
       {
         name: '宝马1',
-        position: [0, 60, -900],
+        position: [0, 10, -900],
         scale,
         parent: 'horse',
         rotationY
       },
       {
         name: '宝马2',
-        position: [0, 60, -1020],
+        position: [0, 30, -1020],
         scale,
         parent: 'horse',
         rotationY

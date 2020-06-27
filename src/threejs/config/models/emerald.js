@@ -15,21 +15,21 @@ const emerald = [
   {
     url: baseUrl + '/emerald.gltf',
     name: '宝石1',
-    position: [100, 60, -960],
+    position: [100, 10, -960],
     scale,
     parent: 'emerald',
     rotationY,
     children: [
       {
         name: '宝石2',
-        position: [100, 60, -900],
+        position: [100, 20, -900],
         scale,
         parent: 'emerald',
         rotationY
       },
       {
         name: '宝石3',
-        position: [100, 60, -1020],
+        position: [100, 30, -1020],
         scale,
         parent: 'emerald',
         rotationY

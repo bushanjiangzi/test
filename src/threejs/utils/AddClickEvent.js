@@ -39,12 +39,12 @@ export default class AddClickEvent {
       // 通过摄像机和鼠标位置更新射线
       findPosition.setFromCamera( mouse, this.camera )
       console.log(this.objectsMeshArr)
-      let positionArr = findPosition.intersectObjects( this.objectsMeshArr)
+      let positionArr = findPosition.intersectObjects( this.objects, true)
       if(positionArr.length > 0) {
         let material = new THREE.MeshLambertMaterial({
           color: 0xff0000,
           transparent: positionArr[0].object.material.transparent ? false : true,
-          opacity: 0.8
+          opacity: 1
         })
         positionArr[0].object.material = material
         console.log('name:', positionArr[0].object.name, ';id:', positionArr[0].object.id)
